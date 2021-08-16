@@ -1,0 +1,19 @@
+version: '3'
+services:
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.14.0
+    user: root
+    container_name: mymetricbeat
+    build: ./
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+      - ./PV/beats/metric/metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml:ro
+    environment:
+      - ELASTICSEARCH_HOST=192.168.10.115:29200
+      - KIBANA_HOST=192.168.10.115:29601
+    network_mode: "host"
+    command: metricbeat -e -E output.elasticsearch.hosts=["192.168.10.115:29200"]
+
